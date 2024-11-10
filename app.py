@@ -24,8 +24,6 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# TODO: connect to a local postgresql database
-
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
@@ -41,13 +39,10 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    # Add any additional fields such as genres, website, etc.
     genres = db.Column(db.ARRAY(db.String))
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(500))
-
-  # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
     __tablename__ = 'artists'
@@ -64,9 +59,6 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(500))
 
-  # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 class Show(db.Model):
     __tablename__ = 'shows'
@@ -108,13 +100,11 @@ def index():
 
 @app.route('/venues')
 def venues():
-    # Query all venues, grouped by city and state
     venues = Venue.query.all()
     data = []
     city_state_map = {}
 
     for venue in venues:
-      # Group venues by city and state
       key = (venue.city, venue.state)
       if key not in city_state_map:
         city_state_map[key] = []
@@ -125,7 +115,6 @@ def venues():
         "num_upcoming_shows": len([show for show in venue.shows if show.start_time > datetime.now()])
       })
 
-    # Transform city_state_map into a structured list for rendering
     for location, venue_list in city_state_map.items():
       data.append({
         "city": location[0],
@@ -150,7 +139,6 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
     venue = Venue.query.get(venue_id)
-    # Return structured data here; this could also render a template
     return render_template('pages/show_venue.html', venue=venue)
 
 
@@ -212,11 +200,9 @@ def delete_venue(venue_id):
 #  ----------------------------------------------------------------
 @app.route('/artists')
 def artists():
-    # Query all artists from the database
     artists = Artist.query.all()
     data = []
 
-    # Prepare data for each artist, including a count of upcoming shows
     for artist in artists:
         data.append({
             "id": artist.id,
@@ -224,7 +210,6 @@ def artists():
             "num_upcoming_shows": len([show for show in artist.shows if show.start_time > datetime.now()])
         })
 
-    # Render the artists page with the list of artists
     return render_template('pages/artists.html', artists=data)
 
 
@@ -242,7 +227,6 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
     artist = Artist.query.get(artist_id)
-    # Render template or return structured data
     return render_template('pages/show_artist.html', artist=artist)
 
 
@@ -256,7 +240,6 @@ def edit_artist(artist_id):
     flash(f'Artist with ID {artist_id} not found.')
     return redirect(url_for('artists'))
 
-  # Populate the form with the current artist data
   artist_data = {
     "id": artist.id,
     "name": artist.name,
@@ -271,7 +254,6 @@ def edit_artist(artist_id):
     "image_link": artist.image_link
   }
 
-  # Render the edit form template with artist data
   form = ArtistForm(obj=artist_data)
   return render_template('forms/edit_artist.html', form=form, artist=artist_data)
 
@@ -285,7 +267,6 @@ def edit_artist_submission(artist_id):
     return redirect(url_for('artists'))
 
   try:
-    # Update the artist’s details with form data
     artist.name = request.form['name']
     artist.city = request.form['city']
     artist.state = request.form['state']
@@ -316,7 +297,6 @@ def edit_venue(venue_id):
     flash(f'Venue with ID {venue_id} not found.')
     return redirect(url_for('venues'))
 
-  # Populate the form with the current venue data
   venue_data = {
     "id": venue.id,
     "name": venue.name,
@@ -332,7 +312,6 @@ def edit_venue(venue_id):
     "image_link": venue.image_link
   }
 
-  # Render the edit form template with venue data
   form = VenueForm(obj=venue_data)
   return render_template('forms/edit_venue.html', form=form, venue=venue_data)
 
@@ -346,7 +325,6 @@ def edit_venue_submission(venue_id):
     return redirect(url_for('venues'))
 
   try:
-    # Update the venue’s details with form data
     venue.name = request.form['name']
     venue.city = request.form['city']
     venue.state = request.form['state']
@@ -426,7 +404,6 @@ def shows():
 
 @app.route('/shows/create')
 def create_shows():
-  # renders form. do not touch.
   form = ShowForm()
   return render_template('forms/new_show.html', form=form)
 
