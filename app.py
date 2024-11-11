@@ -161,71 +161,73 @@ def create_venue_form():
   return render_template('forms/new_venue.html', form=form)
 
 
-# @app.route('/venues/create', methods=['GET', 'POST'])
-# def create_venue_submission():
-#     form = VenueForm()
-#
-#     if request.method == 'POST' and form.validate_on_submit():
-#         try:
-#             # Create a new Venue instance using form data
-#             venue = Venue(
-#                 name=form.name.data,
-#                 city=form.city.data,
-#                 state=form.state.data,
-#                 address=form.address.data,
-#                 phone=form.phone.data,
-#                 genres=form.genres.data,
-#                 facebook_link=form.facebook_link.data,
-#                 image_link=form.image_link.data,
-#                 website=form.website_link.data,
-#                 seeking_talent=form.seeking_talent.data,
-#                 seeking_description=form.seeking_description.data
-#             )
-#             db.session.add(venue)
-#             db.session.commit()
-#             flash(f'Venue "{form.name.data}" was successfully listed!', 'success')
-#             return redirect(url_for('index'))  # Redirect to home page on success
-#
-#         except Exception as e:
-#             db.session.rollback()
-#             flash(f'An error occurred. Venue "{form.name.data}" could not be listed.', 'error')
-#             print(e)
-#
-#         finally:
-#             db.session.close()
-#
-#     else:
-#         # Flash form errors if validation fails
-#         flash('There were errors in your form. Please review and try again.', 'error')
-#
-#     # Redirect to home page even on errors
-#     return redirect(url_for('index'))
-
-@app.route('/venues/create', methods=['POST'])
+@app.route('/venues/create', methods=['GET', 'POST'])
 def create_venue_submission():
-    try:
-        data = request.form
-        new_venue = Venue(
-            name=data['name'],
-            city=data['city'],
-            state=data['state'],
-            address=data['address'],
-            phone=data['phone'],
-            genres=request.form.getlist('genres'),
-            facebook_link=data['facebook_link'],
-            website=data.get('website'),
-            seeking_talent=bool(data.get('seeking_talent')),
-            seeking_description=data.get('seeking_description')
-        )
-        db.session.add(new_venue)
-        db.session.commit()
-        flash('Venue ' + data['name'] + ' was successfully listed!')
-    except Exception as e:
-        db.session.rollback()
-        flash('An error occurred. Venue ' + data['name'] + ' could not be listed.')
-    finally:
-        db.session.close()
+    form = VenueForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            # Create a new Venue instance using form data
+            venue = Venue(
+                name=form.name.data,
+                city=form.city.data,
+                state=form.state.data,
+                address=form.address.data,
+                phone=form.phone.data,
+                genres=form.genres.data,
+                facebook_link=form.facebook_link.data,
+                image_link=form.image_link.data,
+                website=form.website_link.data,
+                seeking_talent=form.seeking_talent.data,
+                seeking_description=form.seeking_description.data
+            )
+            db.session.add(venue)
+            db.session.commit()
+            flash(f'Venue "{form.name.data}" was successfully listed!', 'success')
+            return redirect(url_for('index'))  # Redirect to home page on success
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred. Venue "{form.name.data}" could not be listed.', 'error')
+            print(e)
+
+        finally:
+            db.session.close()
+
+    else:
+        # Flash form errors if validation fails
+        print("Form validation errors:", form.errors)
+        flash(''
+              'There were errors in your form. Please review and try again.', 'error')
+
+    # Redirect to home page even on errors
     return redirect(url_for('index'))
+
+# @app.route('/venues/create', methods=['POST'])
+# def create_venue_submission():
+#     try:
+#         data = request.form
+#         new_venue = Venue(
+#             name=data['name'],
+#             city=data['city'],
+#             state=data['state'],
+#             address=data['address'],
+#             phone=data['phone'],
+#             genres=request.form.getlist('genres'),
+#             facebook_link=data['facebook_link'],
+#             website=data.get('website'),
+#             seeking_talent=bool(data.get('seeking_talent')),
+#             seeking_description=data.get('seeking_description')
+#         )
+#         db.session.add(new_venue)
+#         db.session.commit()
+#         flash('Venue ' + data['name'] + ' was successfully listed!')
+#     except Exception as e:
+#         db.session.rollback()
+#         flash('An error occurred. Venue ' + data['name'] + ' could not be listed.')
+#     finally:
+#         db.session.close()
+#     return redirect(url_for('index'))
 
 
 @app.route('/venues/<int:venue_id>', methods=['DELETE'])
@@ -464,29 +466,44 @@ def create_artist_form():
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
 
-@app.route('/artists/create', methods=['POST'])
+
+@app.route('/artists/create', methods=['GET', 'POST'])
 def create_artist_submission():
-    try:
-        data = request.form
-        new_artist = Artist(
-            name=data['name'],
-            city=data['city'],
-            state=data['state'],
-            phone=data['phone'],
-            genres=request.form.getlist('genres'),
-            facebook_link=data['facebook_link'],
-            website=data.get('website'),
-            seeking_venue=bool(data.get('seeking_venue')),
-            seeking_description=data.get('seeking_description')
-        )
-        db.session.add(new_artist)
-        db.session.commit()
-        flash('Artist ' + data['name'] + ' was successfully listed!')
-    except Exception as e:
-        db.session.rollback()
-        flash('An error occurred. Artist ' + data['name'] + ' could not be listed.')
-    finally:
-        db.session.close()
+    form = ArtistForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            # Create a new Artist instance using form data
+            artist = Artist(
+                name=form.name.data,
+                city=form.city.data,
+                state=form.state.data,
+                phone=form.phone.data,
+                genres=form.genres.data,
+                facebook_link=form.facebook_link.data,
+                image_link=form.image_link.data,
+                website=form.website_link.data,
+                seeking_venue=form.seeking_venue.data,
+                seeking_description=form.seeking_description.data
+            )
+            db.session.add(artist)
+            db.session.commit()
+            flash(f'Artist "{form.name.data}" was successfully listed!', 'success')
+            return redirect(url_for('index'))  # Redirect to home page on success
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'An error occurred. Artist "{form.name.data}" could not be listed.', 'error')
+            print(e)
+
+        finally:
+            db.session.close()
+    else:
+        # Print validation errors for debugging
+        if request.method == 'POST':
+            print("Form validation errors:", form.errors)
+            flash('There were errors in your form. Please review and try again.', 'error')
+
     return redirect(url_for('index'))
 
 
@@ -515,23 +532,36 @@ def create_shows():
   form = ShowForm()
   return render_template('forms/new_show.html', form=form)
 
-@app.route('/shows/create', methods=['POST'])
+
+@app.route('/shows/create', methods=['GET', 'POST'])
 def create_show_submission():
-    try:
-        data = request.form
-        new_show = Show(
-            artist_id=data['artist_id'],
-            venue_id=data['venue_id'],
-            start_time=data['start_time']
-        )
-        db.session.add(new_show)
-        db.session.commit()
-        flash('Show was successfully listed!')
-    except Exception as e:
-        db.session.rollback()
-        flash('An error occurred. Show could not be listed.')
-    finally:
-        db.session.close()
+    form = ShowForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            # Create a new Show instance using form data
+            show = Show(
+                artist_id=form.artist_id.data,
+                venue_id=form.venue_id.data,
+                start_time=form.start_time.data
+            )
+            db.session.add(show)
+            db.session.commit()
+            flash('Show was successfully listed!', 'success')
+            return redirect(url_for('index'))  # Redirect to home page on success
+
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred. Show could not be listed.', 'error')
+            print(e)
+
+        finally:
+            db.session.close()
+    else:
+        if request.method == 'POST':
+            print("Form validation errors:", form.errors)
+            flash('There were errors in your form. Please review and try again.', 'error')
+
     return redirect(url_for('index'))
 
 
