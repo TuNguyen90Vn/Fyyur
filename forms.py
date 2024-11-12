@@ -108,8 +108,8 @@ def is_valid_state(form, field):
 class BaseForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     city = StringField('City', validators=[DataRequired()])
-    state = SelectField('State', choices=State.choices(), validators=[DataRequired(), is_valid_state])
-    phone = StringField('Phone', validators=[is_valid_phone])
+    state = SelectField('State', choices=State.choices(), validators=[Optional()])
+    phone = StringField('Phone', validators=[Optional(), is_valid_phone])
     genres = SelectMultipleField('Genres', choices=Genre.choices(), validators=[DataRequired(), is_valid_genres])
     facebook_link = URLField('Facebook Link', validators=[Optional(), URL()])
     image_link = URLField('Image Link', validators=[Optional(), URL()])
